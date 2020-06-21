@@ -1,0 +1,116 @@
+<script>
+	function getTable() {
+		$("#manageTable").datagrid({
+			url : "${basePath}/sysMng/getAll",
+			toolbar : '#manageTable_tb',
+			width : "500",
+			columns : [ [ {
+				field : 'ID',
+				title : 'ID',
+				width : '20%',
+				hidden : 'true'
+			}, {
+				field : 'NAME',
+				title : '用户',
+				width : '30%'
+			}, {
+				field : 'MODUL',
+				title : '模块',
+				width : '30%',
+				formatter : function(value, row, index) {
+					return '采购申请';
+				}
+			}, {
+				field : 'LIMIT',
+				title : '权限',
+				width : '30%',
+				formatter : function(value, row, index) {
+					return '采购申请管理员';
+				}
+			} ] ]
+		})
+	}
+	$(function() {
+		//加载表格
+		getTable();
+		$("#add").click(function() {
+			//已选审批人员的人员Id，传值到选择页面保证不选择重复的人员
+			var options = {
+					title : '人员选择',
+					url : '${basePath}/baseInfo/personDialog',
+					height: 550,
+					width: 750,
+					closed: false,
+				    cache: false,
+				    modal: true,
+					buttons: [	
+								{
+									text:'确认添加',
+									iconCls:'icon-ok',
+									handler:function(){
+										//人员选择界面返回的值，人员选择状态、人员Id、人员姓名
+										var person = dialog.find("iframe").get(0).contentWindow.addPerson();
+										Utils.ajaxJson("${basePath}/sysMng/add",
+												{staffIds:person.staffIds,modul:1,limit:1},function(obj){
+											if(obj){
+												dialog.dialog('destroy');
+												$("#manageTable").datagrid("reload");
+											}else{
+												$.messager.alert("提示",'添加失败');
+											}
+										},function(error){
+											$.messager.alert("提示",'添加失败');
+										});
+										
+									}
+								},{
+									text:'关闭',
+									iconCls:'icon-remove',
+									handler:function(){
+										dialog.dialog('destroy');
+									}
+								}
+							]
+			};
+			var dialog =window.parent.modalDialog(options);
+		})
+		$("#edit").click(function() {
+
+		})
+		$("#del").click(function() {
+			var row = $("#manageTable").datagrid("getSelected");
+			if(row == null){
+				$.messager.alert("提示",'请先选择！');
+				return;
+			}
+			Utils.ajaxJson("${basePath}/sysMng/del",{id:row.ID},function(obj){
+				if(obj){
+					$("#manageTable").datagrid("reload");
+				}else{
+					$.messager.alert("提示",'删除失败');
+				}
+			},function(error){
+				$.messager.alert("提示",'删除失败');
+			});
+		})
+	})
+</script>
+<div class="outWrapper">
+	<div class="whiteblock">
+		<div style="margin-left: 20px;">
+
+			<table id="manageTable"></table>
+			<div class="toolbuttonbar" id="manageTable_tb">
+				<a id="add" href="javascript:;" class="easyui-linkbutton"> <i
+					class="icon-plus"></i>&nbsp新增
+				</a>
+				<!-- <a id="edit" href="javascript:;" class="easyui-linkbutton">
+							<i class="icon-edit"></i>&nbsp修改</a>  -->
+				<a id="del" href="javascript:;" class="easyui-linkbutton"> <i
+					class="icon-trash"></i>&nbsp删除
+				</a>
+			</div>
+		</div>
+
+	</div>
+</div>

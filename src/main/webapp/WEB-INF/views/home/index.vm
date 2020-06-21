@@ -1,0 +1,624 @@
+<style>
+.outWrapper {
+	display: flex;
+	padding:0 40px;
+	flex-flow: column nowrap;
+	min-height: calc(100% - 22px);
+	height: auto;
+	background:#eeede8;
+}
+.footer {
+	background:#eeede8;
+}
+.flex-content {
+	height: auto;
+	flex: 0 0 auto;
+	font-family: "Microsoft YaHei";
+}
+.flex-content-title {
+	height: 50px;
+	width: 100%;
+	padding-left: 10px;
+	font-size: 18px;
+	color: #3267fe;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+}
+.flex-content-title p {
+	padding-left: 14px;
+}
+.flex-content-main {
+	width: 100%;
+	background: #fff;
+	display: flex;
+}
+.workflow {
+	margin-left: 196px;
+	padding: 5px 0;
+	width: 755px;
+	display: flex;
+	flex-flow: row nowrap;
+	cursor: pointer;
+}
+.workflow a,
+.workflow p {
+	font-size: 12px;
+	color: #031ce3;
+	flex: 1 0 auto;
+	white-space: nowrap;
+	padding-left: 20px;
+	overflow: hidden;
+}
+.workflow a {
+	width: 355px;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+.workflow p {
+	width: 200px;
+	text-overflow: ellipsis;
+}
+.added-project {
+	margin:10px;
+	flex: 0 0 auto;
+	cursor: pointer;
+	border-radius: 40px;
+	background: #659aff;
+}
+.added-project-inner {
+	font-size: 14px;
+	width: auto;
+	padding: 10px 20px;
+	color: #fff;
+	border-radius: 40px;
+	height: auto;
+}
+div.added-project:hover {
+	box-shadow: 0 0 5px 0 #666;
+}
+.added-project:nth-of-type(2n) {
+	background: #33cd66;
+}
+.added-project:nth-of-type(3n) {
+	background: #22acd8;
+}
+.added-project-icon {
+	position:relative;
+	float:right;
+	color:#666;
+	
+	margin-right: -6px;
+	margin-top: -6px;
+	opacity:0;
+	-webkit-transition: opacity 0.233s ease-in;
+	-moz-transition: opacity 0.233s ease-in;
+	transition: opacity 0.233s ease-in;
+}
+.added-project-icon.show {
+	
+	opacity:1.0;
+}
+#showMore {
+	float: right;
+	right: 0;
+}
+.project-title {
+	width:100%;
+	padding:20px 0 10px 44px;
+	font-size:16px;
+	color:#3267fe;
+}
+.project-content {
+	width:100%;
+	padding: 0 140px 20px 140px;
+	font-size:14px;
+	line-height: 28px;
+}
+.infoTitle{
+   margin-bottom:10px;
+}
+.tabs-title{
+    font-size: 18px;
+    color: #3267fe;
+}
+[name=che]{
+    vertical-align: middle;
+    height:20px;
+}
+.tableBtn{
+   cursor:pointer;
+   color:#8470FF;
+   font-weight:bold;
+}
+.msg_title{
+	cursor:pointer;
+}
+</style>
+<link rel="stylesheet" href="${basePath}/resources/css/costPattern.css" type="text/css">
+<div class="infoTitle" id="infoTitle" style="background: #f5f5f5;padding-top:5px;">
+	<span id="project">
+		<i class="icon-home"></i> <a href="#">首页</a>
+	</span>
+</div>
+<div class="outWrapper">
+	<div class="flex-content easyui-tabs enfi-common" id="workTabs" style="height: 80%">
+        <div title="待办事宜" style="width:auto;float:left" data-options="selected:true">
+            <div class="flex-content-main" id="workflow_content"
+                 style="min-height:500px;height:auto;width:97%;flex-flow:column wrap;padding:20px 20px;justify-content: flex-start;">
+                <div style="height:100%;margin:15px;">
+                    <table id="dataGrid" style="min-height:450px"></table>
+                </div>
+            </div>
+        </div>
+        <div title="我发起的流程" style="width:auto;float:left">
+            <div class="flex-content-main" id="workflow_content1"
+                 style="min-height:500px;height:auto;width:97%;flex-flow:column wrap;padding:20px 20px;justify-content: flex-start;">
+                <div style="height:100%;margin-left:15px;">
+                    <table id="dataGrid1" style="min-height:450px"></table>
+                </div>
+            </div>
+        </div>
+        <div title="我已审批的流程" style="width:auto;height:auto;float:left">
+            <div class="flex-content-main" id="workflow_content2"
+                 style="min-height:500px;height:auto;width:97%;flex-flow:column wrap;padding:10px 20px;justify-content: flex-start;">
+                <div style="height:100%;margin:10px;">
+                    <div class="dgsearch" >
+                        <div class="dgsearch-next " style="width: 180px;">
+                            <input id="pk" type="text" class="easyui-textbox project-key"
+                                   maxlength="100" data-options="prompt:'项目编码/名称'" style="height:25px;"/>
+                        </div>
+                        <div class="dgsearch-next" style="width: 280px;">
+                            <div class="label" >开始时间：</div>
+                            <input id="startDate" type="text" class="easyui-textbox dgsearch-textbox" maxlength="100" style="height:20px;"/>
+                        </div>
+                        <div class="dgsearch-next" style="width: 280px;">
+                            <div class="label">结束时间：</div>
+                            <input id="endDate" type="text" class=" easyui-textbox dgsearch-textbox" maxlength="100" style="height:20px;" />
+                        </div>
+                        <div class="dgsearch-next" style="width: 350px;">
+                            <div class="label">是否通过：</div>
+                            <input type="radio" name="che" checked="checked" value="-1">全部&nbsp;
+                            <input type="radio" name="che" value="1"/>是&nbsp;
+                            <input type="radio" name="che"  value="0"/>否
+                            <input type="radio" name="che"  value="2"/>进行中
+                        </div>
+                        <div class="dgsearch-next" style="width: 100px; float: right">
+                            <a id="find" href="javascript:void(0)" style="margin-left: 20px;"
+                               class="easyui-linkbutton search-a" onclick="findData()">
+                                <i class="icon-search"></i>&nbsp;查询</a>
+                        </div>
+                    </div>
+                    <table id="dataGrid2" style="min-height:400px"></table>
+                </div>
+            </div>
+        </div>
+##		<div class="flex-content-title" style="width:auto;float:left">
+##			<p class="msg_title" onclick="ruProcess()">待办事宜</p>
+##			<p id="workflow_count" style="padding-left:8px;color:#ff3437;"></p>
+##		</div>
+##        <div class="flex-content-title" style="width:auto;float:left">
+##            <p class="msg_title" onclick="myProcess()">我发起的流程</p>
+##            <p id="myWorkflow_count" style="padding-left:8px;color:#ff3437;"></p>
+##        </div>
+##        <div class="flex-content-title" style="width:auto;float:left">
+##            <p class="msg_title" onclick="allProcess()">我已审批的流程</p>
+##            <p id="allWorkflow_count" style="padding-left:8px;color:#ff3437;"></p>
+##        </div>
+##		<div class="flex-content-main" id="workflow_content"
+##		style="min-height:500px;height:auto;flex-flow:column wrap;padding:20px 20px;justify-content: flex-start;">
+##			<div style="height:100%;margin-left:15px;">
+##				<table id="dataGrid" style="min-height:450px;"></table>
+##            </div>
+##		</div>
+##        <div class="flex-content-main" id="workflow_content1"
+##             style="min-height:500px;height:auto;flex-flow:column wrap;padding:20px 20px;justify-content: flex-start;">
+##            <div style="height:100%;margin-left:15px;">
+##                <table id="dataGrid1" style="min-height:450px;"></table>
+##            </div>
+##        </div>
+##        <div class="flex-content-main" id="workflow_content2"
+##             style="min-height:500px;height:auto;flex-flow:column wrap;padding:20px 20px;justify-content: flex-start;">
+##            <div style="height:100%;margin-left:15px;">
+##                <div class="dgsearch" >
+##                    <div class="dgsearch-next" style="width: 300px;">
+##                        <div class="label" >开始时间：</div>
+##                        <input id="startDate" type="text" class="easyui-textbox dgsearch-textbox" maxlength="100" style="height:20px;"/>
+##                    </div>
+##                    <div class="dgsearch-next" style="width: 300px;">
+##                        <div class="label">结束时间：</div>
+##                        <input id="endDate" type="text" class=" easyui-textbox dgsearch-textbox" maxlength="100" style="height:20px;" />
+##                    </div>
+##                    <div class="dgsearch-next" style="width: 320px;">
+##                        <div class="label">是否通过：</div>
+##                        <input type="radio" name="che" checked="checked" value="-1">全部&nbsp;
+##                        <input type="radio" name="che" value="1">是&nbsp;
+##                        <input type="radio" name="che"  value="0">否
+##                        <input type="radio" name="che"  value="2">进行中
+##                    </div>
+##                    <div class="dgsearch-next" style="width: 200px;">
+##                        <a id="find" href="javascript:void(0)" class="easyui-linkbutton search-a" onclick="findData()"><i class="icon-search"></i>&nbsp;查询</a>
+##                    </div>
+##				</div>
+##            	<table id="dataGrid2" style="min-height:450px;"></table>
+##            </div>
+##        </div>
+	</div>
+##    <div class="flex-content">
+##        <div class="flex-content-title">
+##            <p>我的发起的流程</p>
+##            <p id="myWorkflow_count" style="padding-left:8px;color:#ff3437;"></p>
+##        </div>
+##        <div class="flex-content-main" id="workflow_content"
+##             style="min-height:300px;height:auto;flex-flow:column wrap;padding:20px 0;justify-content: flex-start;">
+##            <div style="height:100%;margin-left:15px;">
+##                <table id="dataGrid1" style="min-height:280px;"></table>
+##            </div>
+##
+##        </div>
+##    </div>
+	<div class="flex-content" style="display:none;">
+		<div class="flex-content-title">
+			<p>常用项目</p>
+		</div>
+		<div id="project_board" class="flex-content-main"
+		style="min-height:280px;height:280px;flex-flow:row nowrap;padding:30px 0 30px 10px;overflow:hidden;
+				align-items: center;">
+			<div id="project_board_content" style="display:flex;flex-flow:row wrap;width:calc(100% - 100px);overflow:hidden;
+					min-height:260px;height:100%;align-items:start;align-content:start;">
+			</div>
+			<div id="showMore" style="color:#3267fe;font-size:14px;align-self:flex-start;cursor:pointer;">
+				更多&nbsp<i id="showMore_ic" class="icon-angle-down icon-large" style="color:#666;"></i>
+			</div>
+		</div>
+	</div>
+	<!--<div class="flex-content">
+		<div class="flex-content-title">
+			<img src="${basePath}/resources/pbs/images/login/项目简介.png"></img>
+			<p>项目简介</p>
+		</div>
+		<div class="flex-content-main" style="min-height:120px;flex-flow:column nowrap;">
+			<div id="project_info_title" class="project-title">
+				
+			</div>
+			<div id="project_info_content" class="project-content">
+				
+			</div>
+		</div>
+	</div>
+	<div class="flex-content">
+		<div class="flex-content-title">
+			<img src="${basePath}/resources/pbs/images/login/项目指导.png"></img>
+			<p>项目指导</p>
+		</div>
+		<div class="flex-content-main" style="min-height:120px;flex-flow:column nowrap;">
+			<div id="project_guide_title" class="project-title">
+				
+			</div>
+			<div id="project_guide_content" class="project-content">
+				
+			</div>
+		</div>
+	</div>-->
+</div>
+
+<script>
+$(function() {
+
+  /*
+	function reloadWorkflow() {
+		$.ajax({
+			url: "${basePath}/workflow/getTasks",
+			dataType: "json",
+			method: "GET",
+			beforeSend: function() {
+				$("#workflow_content").empty();
+				return true;
+			},
+			success: function(data) {
+				for (var i in data) {
+					var div = document.createElement("div");
+					div.classList.add("workflow");
+
+					var org = document.createElement("p");
+					org.classList.add("workflow-org");
+					org.innerHTML = data[i].projectName;
+
+					var title = document.createElement("a");
+					title.classList.add("workflow-title");
+					title.innerHTML = data[i].processName;
+					title.setAttribute("key", data[i].processKey);
+					title.setAttribute("id", data[i].id);
+					title.addEventListener("click", function() {
+						window.location.href = "${basePath}/bpm/"+this.getAttribute("key")+
+							"View?taskId="+this.getAttribute("id");
+					}, false);
+
+					var date = document.createElement("p");
+					date.classList.add("workflow-date");
+					date.innerHTML = formatDatebox(data[i].createTime);
+
+					div.appendChild(org);
+					div.appendChild(title);
+					div.appendChild(date);
+					$("#workflow_content").append(div);
+				}
+				var count = document.getElementById("workflow_count");
+				if (data.length==0) {
+					count.innerHTML = "(0)";
+				} else {
+					count.innerHTML = "(" + data.length + ")";
+				}
+			}
+		});
+	}
+ 
+	*/
+    reloadWorkflow();
+    reloadMyWorkflow();
+    reloadAllWorkflow();
+    $("#workTabs").tabs({
+        onSelect:function (title,index) {
+            if (index == 0){
+                reloadWorkflow();
+            }
+            if(index == 1){
+                reloadMyWorkflow();
+            }
+        }
+    });
+    $("#startDate").datebox({
+        height: '26',
+        prompt: "请选择日期",
+        editable: false
+    });
+    $("#endDate").datebox({
+        height: '26',
+        prompt: "请选择日期",
+        editable: false
+    });
+});
+//function ruProcess() {
+//    $('#dataGrid').datagrid("reload");
+//    $("#workflow_content").show();
+//    $("#workflow_content1").hide();
+//    $("#workflow_content2").hide();
+//}
+//function myProcess() {
+//    $('#dataGrid1').datagrid("reload");
+//    $("#workflow_content").hide();
+//    $("#workflow_content1").show();
+//    $("#workflow_content2").hide();
+//}
+//function allProcess() {
+////    $('#dataGrid2').datagrid("reload");
+//    $("#workflow_content").hide();
+//    $("#workflow_content1").hide();
+//    $("#workflow_content2").show();
+//}
+//列表显示
+function reloadWorkflow(){
+  $('#dataGrid').datagrid({
+		url:'${basePath}/workflow/getTasks',
+		rownumbers:true,
+		idField: 'id',
+		singleSelect:true,
+		selectOnCheck:false,
+		checkOnSelect:false,
+		columns:[[
+			{field:'id',title:'流程Id',width:'1%',hidden:'true'},
+			{field:'processKey',title:'流程关键字',width:'1%',hidden:'true'},
+			{field:'projectName',halign:'center',title:'项目编码/名称',width:'30%',formatter: function(value,row,index){
+				return row.projectCode + "-"+value;
+			}},
+			{field:'processName',halign:'center',title:'任务名称',width:'30%'},
+			{field:'createTime',halign:'center',title:'通知时间',width:'30%',
+			formatter:function(value,row,index){
+    				if(value==null||value==undefined){
+    					return null;
+    				}else{
+    					return formatDatebox(new Date(value));
+    				}
+			   }
+			},
+			{field:'CZ',halign:'center',align:'center',title:'操作',width:'10%',
+			formatter:function(value,row,index){
+				if(row.name=='发起人查看'){
+					return "<a  class='easyui-linkbutton tableBtn view_version'" +
+    				"onclick=submitAppr('"+row.id+"','"+row.processKey+"') " +
+    				"title='查看' ><span >查看</span></a>";
+            	}else{
+            		return "<a  class='easyui-linkbutton tableBtn view_version'" +
+    				"onclick=submitAppr('"+row.id+"','"+row.processKey+"') " +
+    				"title='审批' ><span >审批</span></a>";
+            	} 
+				
+			   }
+			 }
+		]],
+		onDblClickRow:function(rowIndex,rowData){
+			var url = "${basePath}/bpm/"+rowData.processKey+"View?taskId="+rowData.id;
+			window.open(url);
+		},
+		onLoadSuccess:function(data){
+		    var newTitle = "待办事宜 (0)"
+            if (data.total>0) {
+                newTitle = "待办事宜 "+"<span style=\"color: red;\">("+data.total+")</span>";
+			}
+            var tab = $('#workTabs').tabs('getTab',0);
+            $('#workTabs').tabs('update', { tab: tab, options: { title: newTitle } });
+//            var count = document.getElementById("workflow_count");
+//			if (data.total>0) {
+//			    count.innerHTML = "(" + data.total + ")";
+//			} else {
+//				count.innerHTML = "(0)";
+//			}
+		}
+	});
+}
+
+//我的流程列表
+function reloadMyWorkflow(){
+    $('#dataGrid1').datagrid({
+        url:'${basePath}/workflow/getMyProcesses',
+        rownumbers:true,
+        idField: 'id',
+        singleSelect:true,
+        selectOnCheck:false,
+        checkOnSelect:false,
+        columns:[[
+            {field:'id',title:'流程Id',width:'1%',hidden:'true'},
+            {field:'processKey',title:'流程关键字',width:'1%',hidden:'true'},
+            {field:'projectName',halign:'center',title:'项目编码/名称',width:'30%',formatter: function(value,row,index){
+				return row.projectCode + "-"+value;
+			}},
+            {field:'name',halign:'center',title:'任务名称',width:'30%'},
+            {field:'createTime',halign:'center',title:'通知时间',width:'30%',
+                formatter:function(value,row,index){
+                    if(value==null||value==undefined){
+                        return null;
+                    }else{
+                        return formatDatebox(new Date(value));
+                    }
+                }
+            },
+            {field:'CZ',halign:'center',align:'center',title:'操作',width:'10%',
+                formatter:function(value,row,index){
+                    return "<a  class='easyui-linkbutton tableBtn view_version'" +
+                            "onclick=checkAppr('"+row.id+"','"+row.processKey+"') " +
+                            "title='查看' ><span >查看</span></a>";
+                }
+            }
+        ]],
+        onDblClickRow:function(rowIndex,rowData){
+            var url = "${basePath}/bpm/processQueryView?taskId="+rowData.id;
+            window.open(url);
+        },
+        onLoadSuccess:function(data){
+            var newTitle = "我发起的流程 (0)"
+            if (data.total>0) {
+                newTitle = "我发起的流程 "+"<span style=\"color: red;\">("+data.total+")</span>";
+            }
+            var tab = $('#workTabs').tabs('getTab',1);
+            $('#workTabs').tabs('update', { tab: tab, options: { title: newTitle } });
+//            var count = document.getElementById("myWorkflow_count");
+//            if (data.total>0) {
+//                count.innerHTML = "(" + data.total + ")";
+//            } else {
+//                count.innerHTML = "(0)";
+//            }
+        }
+    });
+}
+
+function reloadAllWorkflow(){
+    $('#dataGrid2').datagrid({
+        url:'${basePath}/workflow/getAllProcesses',
+        pagination : true,
+        pageNumber : 1,
+        pageSize: 10,
+        rownumbers:true,
+        idField: 'id',
+        singleSelect:true,
+        selectOnCheck:false,
+        checkOnSelect:false,
+        columns:[[
+            {field:'id',title:'流程Id',width:'30%',hidden:'true'},
+            {field:'processKey',title:'流程关键字',width:'25%',hidden:'true'},
+            {field:'projectName',halign:'center',title:'项目编码/名称',width:'30%',formatter: function(value,row,index){
+				return row.projectCode + "-"+value;
+			}},
+            {field:'name',halign:'center',title:'任务名称',width:'30%'},
+            {field:'createTime',halign:'center',title:'通知时间',width:'20%',
+//                formatter:function(value,row,index){
+//                    if(value==null||value==undefined){
+//                        return null;
+//                    }else{
+//                        return formatDatebox(new Date(value));
+//                    }
+//                }
+            },
+            {field:'result',halign:'center',title:'状态',width:'10%'},
+            {field:'CZ',halign:'center',align:'center',title:'操作',width:'10%',
+                formatter:function(value,row,index){
+                    return "<a  class='easyui-linkbutton tableBtn view_version'" +
+                            "onclick=checkHisAppr('"+row.id+"','"+row.processKey+"') " +
+                            "title='查看' ><span >查看</span></a>";
+                }
+            }
+        ]],
+        queryParams: {
+            projectKey: function () {
+                return $("#pk").val();
+            },
+            startDate: function(){
+                return $('#startDate').searchbox('getValue');
+            },
+            endDate: function(){
+                return $('#endDate').searchbox('getValue');
+            },
+            isPass: function () {
+                var isPass = -1;
+                var radionum = document.getElementsByName("che");
+                for(var i=0;i<radionum.length;i++){
+                    if(radionum[i].checked){
+                        isPass = radionum[i].value
+                    }
+                }
+                return isPass
+            }
+        },
+        onDblClickRow:function(rowIndex,rowData){
+            var url = "${basePath}/bpm/hisProcessQueryView?processId="+rowData.id;
+            window.open(url);
+        },
+//        onLoadSuccess:function(data){
+//            var count = document.getElementById("allWorkflow_count");
+//            if (data.total>0) {
+//                count.innerHTML = "(" + data.total + ")";
+//            } else {
+//                count.innerHTML = "(0)";
+//            }
+//        }
+    });
+}
+function findData(){
+    $("#dataGrid2").datagrid("reload");
+}
+function submitAppr(id,key){
+    var url = "${basePath}/bpm/"+convertKey(key)+"View?taskId="+id;
+    window.open(url);
+}
+
+function checkAppr(id,key){
+    if (key.indexOf("Engine") != -1){
+        key = "engineInteration";
+    }
+    var url = "${basePath}/bpm/processQueryView?taskId="+id+"&key="+key;
+    window.open(url);
+}
+function checkHisAppr(id,key) {
+    if (key.indexOf("Engine") != -1){
+        key = "engineInteration";
+    }
+    var url = "${basePath}/bpm/hisProcessQueryView?processId="+id+"&key="+key;
+    window.open(url);
+}
+
+//新流程id不一样，需转换为以前的流程id
+function convertKey(key) {
+    var newKey = key;
+    if (key === "mgnSubAppr1" || key === "mgnSubAppr2") {
+        newKey = "mgnSubAppr";
+    }else if (key.indexOf("purreq_engine")!=-1 || key === "purreq_service") {
+        if (key === "purreq_engine_device") {
+            newKey = "equipPurAppr";
+        }else {
+            newKey = "engineInteration"
+        }
+    }else if (key === "purreq_nonengine") {
+        newKey = "nonEngineIntegration";
+    }
+    return newKey;
+}
+</script>

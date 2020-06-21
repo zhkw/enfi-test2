@@ -1,0 +1,36 @@
+<style>
+	.sync{
+		margin: 10px;
+	}
+
+</style>
+<div class="infoTitle">
+	<i class="icon-home"></i>
+	<a href="javascript:;">系统管理</a>
+	<i class="icon-caret-right"></i>
+	<a href="javascript:;">数据同步</a>
+</div>
+<div  class="outWrapper">
+    <div class="whiteblock">
+    	<div >
+    		<a class="easyui-linkbutton sync" type="1">同步EBS物料</a>
+    		<a class="easyui-linkbutton sync" type="2">同步供应商</a>
+    		<a class="easyui-linkbutton sync" type="3">同步用户</a>
+    		<a class="easyui-linkbutton sync" type="4">同步设备指标数据</a>
+    		<a class="easyui-linkbutton sync" type="5">同步造价指标数据</a>
+    	</div>
+    </div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$(".sync").click(function(){
+			var type =  $(this).attr("type");
+			$.messager.progress({text:'数据处理中......',interval:'100'});
+			$.post("${basePath}/importData/dataSync","type="+type,function(obj){
+				$.messager.progress('close'); 
+				MyMessager.slide.show("提示", obj.rs);
+			},"json")
+		})
+	})
+	
+</script>

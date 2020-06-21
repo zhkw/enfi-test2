@@ -1,0 +1,150 @@
+<style>
+.modal {
+  width:80px;
+  height:20px;
+  font-size:12px;
+  position:absolute;
+  color:#fff;
+  display:none;
+  z-index:9999;
+  cursor: pointer;
+}
+.modal span:hover{
+  color:#4aedf4;
+}
+.nav-li.off {
+    visibility: hidden;
+}
+.nav-li.on {
+    visibility: visible;
+}
+</style>
+<div class="top">
+    <p class="title"><span>产品管理平台</span></p>
+    <ul class="topUl">
+        <li class="topUserInfo">
+            <a href="#" id="showUserInfo"> <span class="icon-user"></span> 
+                #if(${EV.staffName}!="")${EV.staffName}
+                #else ${EV.userName}
+                #end
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="modal" id="passwordModal">
+    <span><i class="icon-edit"></i>帮助</span>
+</div>
+<div class="topNav">
+    <ul>
+        <li>
+            <a href="${basePath}/index">首页</a>
+        </li>
+        <!--<li>
+            <a class="nav">项目管理<i class="icon-angle-down"></i></a>
+            <ul>
+                <li class="nav-li off"><a href="${basePath}/projectU/mngProject">项目预算</a></li>
+                <li class="nav-li off"><a href="${basePath}/purPlan/purPlanView">采购计划</a></li>
+                <li class="nav-li off"><a href="${basePath}/subcontractPlan/constructPlanView">施工分包策划</a></li>
+                <li class="nav-li off"><a href="${basePath}/subcontractPlan/designPlanView">设计分包策划</a></li>
+                <li class="nav-li off"><a href="${basePath}/subcontractPlan/otherPlanView">其他分包策划</a></li>
+                <li class="nav-li off"><a href="${basePath}/purReqU/purReqView">采购申请</a></li>
+                <li class="nav-li off"><a href="${basePath}/pbsTempMng/pbsTempMngView">PBS模板管理</a></li>
+                <li class="nav-li off"><a id="checkRecord" href="javascript:;">记录查看</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="${basePath}/projectU/project">项目报价</a>
+        </li>-->
+        #set ( $core_list = $!{authTool.getModulesByName(${EV.userName})} ) 
+        #foreach($element in $core_list)
+            <li style="min-width:110px;"><a href="
+                #if($!{element})${basePath}/$!{element.target}"
+                class="nav">#springMessage("$!{element.moduleName}")
+                #if($element.getChildren())
+                <i class="icon-angle-down"></i>
+                </a>
+            <ul>
+            #foreach($child in $element.getChildren())
+                <li class="nav-li off">
+                    <a href="${basePath}/$!{child.target}">#springMessage("$!{child.moduleName}")
+                    </a>
+                </li>
+            #end
+            </ul>
+            #else
+            </a>
+            #end
+            #end
+            </li>
+        #end
+	    <!--<li>
+            <a class="nav">设备价格库<i class="icon-angle-down"></i></a>
+            <ul>
+                <li class="nav-li off"><a href="${basePath}/equipPriceLib/equipPriceLibView?param=find">设备指标库查询</a></li>
+                <li class="nav-li off"><a href="${basePath}/equipPriceLib/equipPriceLibView?param=mng">设备指标库管理</a></li>
+		        <li class="nav-li off"><a href="${basePath}/costTargetMng/pbsCostTargetMngView">造价指标库管理</a></li>
+	            <li class="nav-li off"><a href="${basePath}/costTargetMng/queryPbsCostTargetInfoView">造价指标库查询</a></li>
+            </ul>
+        </li>-->
+        <li><a id="checkRecord" href="javascript:;">记录查看</a></li>
+        <!--<li><a id="deployProcess" href="#">流程发布</a></li>-->
+    </ul>
+</div>
+<script>
+$(function() {
+    $(".nav").on("mouseenter", function() {
+        $(this).siblings("ul").children("li").removeClass("off").addClass("on");
+        $(this).find("i").removeClass("icon-angle-down");
+        $(this).find("i").addClass("icon-angle-up");
+    });
+
+    $(".nav").parent().on("mouseleave", function() {
+        $(this).children("ul").children("li").removeClass("on").addClass("off");
+        $(this).find("i").removeClass("icon-angle-up");
+        $(this).find("i").addClass("icon-angle-down");
+    });
+    $("#logoff").on("click", function() {
+        window.location.href = "${basePath}";
+    });
+    $("#checkRecord").click(function(){
+    	var options = {
+			title : '查看记录',
+			url : $(".basePath").attr("basePath")+'/optRecord/getRecordView',
+			height: 550,
+			width: 850,
+			buttons : [{
+				text : '刷新',
+				handler : function() {
+					dlg.find("iframe").get(0).contentWindow.reloadData();
+				}
+			},{
+				text : '关闭',
+				handler : function() {
+					var href = window.location.href;
+					var index = href.indexOf("projectU/");
+					if(index != -1){
+						$(".refreshBtn").click();
+					}
+					dlg.dialog("destroy");
+				}
+			}]
+		};
+		var dlg = modalDialog(options);
+    });
+    $("#deployProcess").on("click", function() {
+        $.ajax({
+            url: "${basePath}/bpm/deployProcess",
+            method: "post",
+            success: function() {
+                MyMessager.slide.show("done");
+            },
+            beforeSend: function() {
+                MyMessager.prog.show("","","发布中...");
+            },
+            complete: function() {
+                MyMessager.prog.close();
+            }
+        });
+    });
+});
+</script>

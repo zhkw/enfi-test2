@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>登录</title>
+		<script type="text/javascript" src="${basePath}/resources/plugin/jquery/jquery-1.10.2.min.js"></script>
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+			}
+			body {
+				background: url(${basePath}/resources/images/bg-img.jpg);
+				background-size: cover;
+			}
+			.title-top {
+				width: 100%;
+				height: 30px;
+				position: absolute;
+				top: 50%;
+				margin-top: -300px;
+				text-align: center;
+				text-shadow: 2px 2px 20px #aaa;
+			}
+			.title-top p {
+				font-size: 28pt;
+				color: white;
+			}
+			.window-center {
+				width: 400px;
+				height: 302px;
+				background: white;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin: -151px 0 0 -200px;
+				border-radius: 5px;
+				box-shadow:0 0 10px 0 #aaa;
+			}
+			.welcome-panel {
+				font-family: "Microsoft Yahei";
+				font-size: 18px;
+				color: #41b3ea;
+				width: 100%;
+				height: 18px;
+				margin-top: 32px;
+				margin-bottom: 30px;
+				text-align: center;
+				line-height: 18px;
+				font-weight: 900;
+			}
+			.input-panel {
+				width: 320px;
+				height: 92px;
+				margin-left: 40px;
+				margin-bottom: 15px;
+			}
+			.input-panel input {
+				width: 298px;
+				height: 42px;
+				padding-left: 18px;
+				font-size: 14px;
+				border: 1px solid #ccc;
+				border-radius: 0;
+			}
+			.recover-panel {
+				height: 14px;
+				width: 320px;
+				margin-left: 40px;
+				font-size: 12px;
+				text-align:right;
+				color: #f06060;
+				margin-bottom: 16px;
+			}
+			.recover-panel p {
+			 	cursor: pointer;
+			}
+			.button-panel {
+				width: 320px;
+				height: 42px;
+				margin-left: 40px;
+				background: #41b3ea;
+				border-radius: 5px;
+				font-size: 15px;
+				color: white;
+				text-align: center;
+				line-height: 42px;
+				letter-spacing: 8px;
+				border:none;
+				cursor: pointer;
+			::-moz-placeholder {
+				color: #999;
+			}
+			::-webkit-input-placeholder{
+				color: #999;
+			}
+		</style>
+		<script type="text/javascript">
+			if(window.top!=window.self){
+				window.top.location= "${basePath}";	
+			}
+		</script>
+	</head>
+	<body>
+		<div class="title-top">
+			<p>产品管理平台</p>
+		</div>
+		<form id="loginForm">
+		<div class="window-center">
+			<div class="welcome-panel">
+				<p>欢迎登录</p>
+			</div>
+			<div class="input-panel" id="userInput">
+				<input id="username"  name="username" type="text" placeholder="用户名" value=""
+					style="border-bottom:0;">
+				<input id="password" name="password" type="password" placeholder="密码" value="">
+			</div>
+			<div class="recover-panel">
+			    <p id="message"></p>
+			</div>
+			<input class="button-panel" id="login" type="button" value="登录">
+		</div>
+		</form>
+    <script>
+        function valadation(){
+	        if($("#username").val()==""||$("#password").val()==""){
+	            return false;
+	        }
+	        return true;
+	    }
+        $(function(){
+            $("#userInput input").hover(function(){
+		        $("#message").html("");
+		    },function(){
+		        if(!valadation())
+		           $("#message").html("用户名、密码不能为空!");
+		    });
+		    $("#login").on("click",function(){
+		        if(valadation()){
+		             var data = new Object();
+		             data.username=$("#username").val();
+		             data.password=$("#password").val();
+		             $.ajax({
+				            url:"${basePath}/login",
+				            method:"post",
+				            data:data,
+				            success:function(data, textStatus, jqXHR) {
+				                if(data){
+				                   window.location.href = "${basePath}/index";
+				                }else{
+				                   $("#message").html("用户名、密码错误!");
+				                }
+				            },
+				            error:function(jqXHR, textStatus, errorThrown) {
+				            	$("#message").html(jqXHR.responseText);
+				            }
+				    });
+		        
+		        }else
+		           $("#message").html("用户名、密码不能为空!");
+		    
+		    });
+		    $("#username").keypress(function(event) {
+		    	if (event.which == 13) {
+		    		$("#login").click();
+		    	}
+		    });
+		    $("#password").keypress(function(event) {
+		    	if (event.which == 13) {
+		    		$("#login").click();
+		    	}
+		    });
+        });
+	</script>
+	</body>
+</html>
