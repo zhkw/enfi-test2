@@ -4,7 +4,7 @@ import org.hibernate.annotations.PolymorphismType;
 
 import javax.persistence.*;
 
-@Entity
+@javax.persistence.Entity
 @Table(
         name = "ctp_item"
 )

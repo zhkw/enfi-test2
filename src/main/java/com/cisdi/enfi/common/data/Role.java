@@ -1,6 +1,7 @@
 package com.cisdi.enfi.common.data;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 
 @Entity
 @Inheritance(

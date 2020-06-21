@@ -2,7 +2,7 @@ package com.cisdi.enfi.common.data;
 
 import javax.persistence.*;
 
-@Entity
+@javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "pbs_view_staff_deptrel")
 public class StaffDeptRel extends ExtItem{

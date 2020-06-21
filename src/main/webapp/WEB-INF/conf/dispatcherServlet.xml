@@ -17,6 +17,8 @@
     <!-- Springmvc scan -->
     <context:component-scan base-package="com.mkyong.web.controller" />
 
+    <context:component-scan base-package="com.cisdi.enfi.common.controller" />
+
     <!-- 配置velocity引擎处理请求 -->
     <bean id="velocityConfigurer"
           class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">

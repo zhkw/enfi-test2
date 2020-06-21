@@ -2,7 +2,7 @@ package com.cisdi.enfi.common.data;
 
 import javax.persistence.*;
 
-@Entity
+@javax.persistence.Entity
 @Table(
         name = "ctp_relation"
 )
